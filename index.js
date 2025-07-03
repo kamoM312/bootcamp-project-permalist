@@ -43,10 +43,20 @@ async function upateItem(item_id, title){
     console.log(error);
   }
 }
+
+async function deleteItem(item_id){
+  try {
+    await db.query("DELETE FROM items WHERE id = $1;",
+    [item_id]
+  );
+  } catch (error) {
+    console.log(error);
+  }
+}
  
 app.get("/", async (req, res) => {
   const result = await getItems();
-  console.log(result);
+  // console.log(result);
   res.render("index.ejs", {
     listTitle: "Today",
     listItems: result,
@@ -66,7 +76,11 @@ app.post("/edit", async (req, res) => {
   res.redirect("/");
 });
 
-app.post("/delete", (req, res) => {});
+app.post("/delete", async (req, res) => {
+  const item_id = req.body.deleteItemId;
+  await deleteItem(item_id);
+  res.redirect("/");
+});
 
 app.listen(port, () => {
   console.log(`Server running on port ${port}`);
