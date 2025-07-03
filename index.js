@@ -32,6 +32,17 @@ async function addItem(item){
     console.log(error);
   }
 }
+
+async function upateItem(item_id, title){
+  try {
+    await db.query("UPDATE items SET title = $1 WHERE id = $2;",
+      [title, item_id]
+    );
+    
+  } catch (error) {
+    console.log(error);
+  }
+}
  
 app.get("/", async (req, res) => {
   const result = await getItems();
@@ -48,7 +59,12 @@ app.post("/add", async (req, res) => {
   res.redirect("/");
 });
 
-app.post("/edit", (req, res) => {});
+app.post("/edit", async (req, res) => {
+  const item_id = req.body.updatedItemId;
+  const title = req.body.updatedItemTitle;
+  await upateItem(item_id, title);
+  res.redirect("/");
+});
 
 app.post("/delete", (req, res) => {});
 
